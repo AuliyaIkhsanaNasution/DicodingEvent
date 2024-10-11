@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Dicoding Event</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_available">Event Available</string>
+    <string name="title_notavailable">Event Not Available</string>
 </resources>
