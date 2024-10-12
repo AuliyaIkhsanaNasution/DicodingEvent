@@ -3,4 +3,5 @@
     <string name="title_home">Home</string>
     <string name="title_available">Event Available</string>
     <string name="title_notavailable">Event Not Available</string>
+    <string name="summary">Stay Update</string>
 </resources>
