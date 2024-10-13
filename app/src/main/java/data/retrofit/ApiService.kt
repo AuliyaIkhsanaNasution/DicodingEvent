@@ -1,5 +1,6 @@
 package data.retrofit
 
+import data.response.DetailResponse
 import retrofit2.Call
 import data.response.EventResponse
 import data.response.ListEventsItem
@@ -21,6 +22,6 @@ interface ApiService {
     fun searchEvents(@Query("active") active: Int = -1, @Query("q") keyword: String): Call<EventResponse>
 
 
-    @GET("events/{id}")
-    fun getEventDetail(@Path("id") eventId: Int): Call<ListEventsItem>
+    @GET("events/{id}") // Path untuk mendapatkan detail event
+    fun getEventDetail(@Path("id") eventId: Int): Call<DetailResponse>
 }

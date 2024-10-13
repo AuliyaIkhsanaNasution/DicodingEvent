@@ -15,11 +15,33 @@
         android:id="@+id/navigation_event_available"
         android:name="com.example.dicodingevent.ui.event_available.EventAvailableFragment"
         android:label="@string/title_available"
-        tools:layout="@layout/fragment_event_available" />
+        tools:layout="@layout/fragment_event_available">
+        <action
+            android:id="@+id/action_navigation_event_available_to_event_detail"
+            app:destination="@id/navigation_event_detail" >
+            <argument
+                android:name="eventId"
+                app:argType="integer" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_event_not_available"
         android:name="com.example.dicodingevent.ui.event_not_available.EventNotAvailableFragment"
         android:label="@string/title_notavailable"
-        tools:layout="@layout/fragment_event_not_available" />
+        tools:layout="@layout/fragment_event_not_available">
+        <action
+            android:id="@+id/action_navigation_event_not_available_to_event_detail"
+            app:destination="@id/navigation_event_detail" >
+            <argument
+                 android:name="eventId"
+                 app:argType="integer" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_event_detail"
+        android:name="com.example.dicodingevent.ui.detail.EventDetailFragment"
+        android:label="@string/title_event_detail"
+        tools:layout="@layout/fragment_event_detail" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.example.dicodingevent.ui.event_available
+package com.example.dicodingevent.ui.event_not_available
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,9 +9,9 @@ import com.bumptech.glide.Glide
 import com.example.dicodingevent.databinding.ItemEventAvailableBinding
 import data.response.ListEventsItem
 
-class EventAvailableAdapter(
+class EventNotAvailableAdapter(
     private val onItemClicked: (Int) -> Unit
-) : ListAdapter<ListEventsItem, EventAvailableAdapter.EventViewHolder>(DIFF_CALLBACK) {
+) : ListAdapter<ListEventsItem, EventNotAvailableAdapter.EventViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val binding = ItemEventAvailableBinding.inflate(LayoutInflater.from(parent.context), parent, false)
