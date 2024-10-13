@@ -23,17 +23,21 @@ class EventDetailViewModel : ViewModel() {
     val isLoading: LiveData<Boolean> get() = _isLoading
 
     fun loadDetailEvent(eventId: Int) {
+        if (_eventData.value != null) {
+            return
+        }
+
         _isLoading.value = true
 
-        val apiService = ApiConfig.getApiService() // Menggunakan ApiConfig untuk mendapatkan ApiService
+        val apiService = ApiConfig.getApiService()
         apiService.getEventDetail(eventId).enqueue(object : Callback<DetailResponse> {
             override fun onResponse(call: Call<DetailResponse>, response: Response<DetailResponse>) {
                 _isLoading.value = false
                 if (response.isSuccessful) {
-                    val eventDetail = response.body()?.event // Ambil event dari DetailResponse
+                    val eventDetail = response.body()?.event
                     Log.d("EventDetailViewModel", "Response body: $eventDetail")
                     if (eventDetail != null) {
-                        _eventData.value = eventDetail // Set eventDetail ke LiveData
+                        _eventData.value = eventDetail
                     } else {
                         _errorMessage.value = "Event detail is empty or null"
                     }

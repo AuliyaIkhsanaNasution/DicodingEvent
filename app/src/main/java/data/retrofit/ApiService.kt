@@ -3,7 +3,6 @@ package data.retrofit
 import data.response.DetailResponse
 import retrofit2.Call
 import data.response.EventResponse
-import data.response.ListEventsItem
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

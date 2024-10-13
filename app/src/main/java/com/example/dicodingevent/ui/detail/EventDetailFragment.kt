@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.core.text.HtmlCompat
@@ -34,15 +32,14 @@ class EventDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Mengambil eventId dari arguments langsung
         val eventId = arguments?.getInt("eventId")
         if (eventId != null) {
-            Log.d("EventDetailFragment", "Event ID: $eventId") // Log event ID untuk debug
-            // Mengambil detail event
-            viewModel.loadDetailEvent(eventId)
+            if (viewModel.eventData.value == null) {
+                viewModel.loadDetailEvent(eventId)
+            }
             observeViewModel()
         } else {
-            showToast("Event ID not available")
+            showErrorMessage("Event ID not available")
         }
     }
 
@@ -52,7 +49,7 @@ class EventDetailFragment : Fragment() {
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            showToast(errorMessage)
+            showErrorMessage(errorMessage)
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
@@ -71,14 +68,13 @@ class EventDetailFragment : Fragment() {
             quota.text = "Kuota: ${event.quota}"
             eventDetails.text = event.summary
             description.text =
-                HtmlCompat.fromHtml( event.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                HtmlCompat.fromHtml(event.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
-            // Memuat gambar acara menggunakan Glide
             Glide.with(this@EventDetailFragment)
                 .load(event.mediaCover)
                 .into(eventImage)
 
-            // Mengatur tombol untuk membuka link acara
+
             openLinkButton.setOnClickListener {
                 Intent(Intent.ACTION_VIEW, Uri.parse(event.link)).also { intent ->
                     startActivity(intent)
@@ -91,8 +87,10 @@ class EventDetailFragment : Fragment() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+
+    private fun showErrorMessage(message: String) {
+        binding.tvErrorMessage.text = message
+        binding.tvErrorMessage.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {
