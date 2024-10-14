@@ -15,20 +15,22 @@ class EventNotAvailableAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val binding = ItemEventAvailableBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return EventViewHolder(binding, onItemClicked)
+        return EventViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         val event = getItem(position)
-        holder.bind(event)
+        holder.bind(event, onItemClicked)
     }
 
     class EventViewHolder(
-        private val binding: ItemEventAvailableBinding,
-        private val onItemClicked: (Int) -> Unit
+        private val binding: ItemEventAvailableBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(event: ListEventsItem) {
+
+        fun bind(event: ListEventsItem, onItemClicked: (Int) -> Unit) {
             binding.summary.text = event.name
+
+            // Load image with Glide and handle potential errors
             Glide.with(binding.image.context)
                 .load(event.mediaCover)
                 .into(binding.image)
@@ -38,6 +40,7 @@ class EventNotAvailableAdapter(
             }
         }
     }
+
 
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListEventsItem>() {
