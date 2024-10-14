@@ -10,12 +10,12 @@ import data.retrofit.ApiConfig
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 class HomeViewModel : ViewModel() {
 
     private val _eventSlider = MutableLiveData<List<SlideModel>>()
     val eventSlider: LiveData<List<SlideModel>> get() = _eventSlider
-
 
     private val _completedEventList = MutableLiveData<List<ListEventsItem>>()
     val completedEventList: LiveData<List<ListEventsItem>> get() = _completedEventList
@@ -26,8 +26,24 @@ class HomeViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: MutableLiveData<String?> get() = _errorMessage
 
+    private fun handleApiError(code: Int) {
+        _errorMessage.value = when (code) {
+            400 -> "Permintaan tidak valid. Silakan periksa kembali input Anda."
+            401 -> "Anda perlu login untuk mengakses sumber daya ini."
+            403 -> "Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini."
+            404 -> "Halaman yang Anda cari tidak ditemukan."
+            500 -> "Terjadi kesalahan pada server. Silakan coba lagi nanti."
+            else -> "Kesalahan tidak diketahui. Kode status: $code"
+        }
+    }
+
     // Function to load active events
     fun loadEventData() {
+        // Cek apakah data event slider sudah ada, jika sudah tidak perlu memanggil ulang API
+        if (_eventSlider.value != null && _eventSlider.value!!.isNotEmpty()) {
+            return
+        }
+
         _loading.value = true
         _errorMessage.value = null
 
@@ -38,26 +54,34 @@ class HomeViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     response.body()?.let { eventResponse ->
                         val topEvents = eventResponse.listEvents.take(5)
-
                         val slides = topEvents.map { event ->
                             SlideModel(event.mediaCover, event.name)
                         }
                         _eventSlider.value = slides
                     }
                 } else {
-                    _errorMessage.value = "Failed to load data"
+                    handleApiError(response.code())
                 }
             }
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
                 _loading.value = false
-                _errorMessage.value = "Error: ${t.message}"
+                if (t is IOException) {
+                    _errorMessage.value = "Gagal dimuat, coba cek koneksi internet"
+                } else {
+                    _errorMessage.value = "Error: ${t.message}"
+                }
             }
         })
     }
 
     // Function to load completed events
     fun loadCompletedEvents() {
+        // Cek apakah data completed event sudah ada, jika sudah tidak perlu memanggil ulang API
+        if (_completedEventList.value != null && _completedEventList.value!!.isNotEmpty()) {
+            return
+        }
+
         _loading.value = true
         _errorMessage.value = null
 
@@ -70,14 +94,19 @@ class HomeViewModel : ViewModel() {
                         _completedEventList.value = eventResponse.listEvents.take(5)
                     }
                 } else {
-                    _errorMessage.value = "Failed to load completed events"
+                    handleApiError(response.code())
                 }
             }
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
                 _loading.value = false
-                _errorMessage.value = "Error: ${t.message}"
+                if (t is IOException) {
+                    _errorMessage.value = "Gagal dimuat, coba cek koneksi internet"
+                } else {
+                    _errorMessage.value = "Error: ${t.message}"
+                }
             }
         })
     }
 }
+

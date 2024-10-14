@@ -8,6 +8,7 @@ import data.retrofit.ApiConfig
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 class EventAvailableViewModel : ViewModel() {
     private val _eventResponse = MutableLiveData<EventResponse?>()
@@ -16,10 +17,11 @@ class EventAvailableViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> get() = _errorMessage
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: MutableLiveData<String?> get() = _errorMessage
 
     fun fetchActiveEvents() {
+        _errorMessage.value = null
         if (_eventResponse.value != null) {
             return
         }
@@ -55,7 +57,11 @@ class EventAvailableViewModel : ViewModel() {
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
                 _isLoading.value = false
-                _errorMessage.value = "Error: ${t.message}"
+                if (t is IOException) {
+                    _errorMessage.value = "Gagal dimuat, coba cek koneksi internet"
+                } else {
+                    _errorMessage.value = "Error: ${t.message}"
+                }
             }
         })
     }

@@ -10,6 +10,7 @@ import data.retrofit.ApiConfig
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 class EventDetailViewModel : ViewModel() {
 
@@ -33,22 +34,38 @@ class EventDetailViewModel : ViewModel() {
         apiService.getEventDetail(eventId).enqueue(object : Callback<DetailResponse> {
             override fun onResponse(call: Call<DetailResponse>, response: Response<DetailResponse>) {
                 _isLoading.value = false
-                if (response.isSuccessful) {
-                    val eventDetail = response.body()?.event
-                    Log.d("EventDetailViewModel", "Response body: $eventDetail")
-                    if (eventDetail != null) {
-                        _eventData.value = eventDetail
-                    } else {
-                        _errorMessage.value = "Event detail is empty or null"
+                when (response.code()) {
+                    200 -> {
+                        _eventData.value = response.body()?.event
                     }
-                } else {
-                    _errorMessage.value = "Failed to load Detail Event"
+                    400 -> {
+                        _errorMessage.value = "Permintaan tidak valid. Silakan periksa kembali input Anda."
+                    }
+                    401 -> {
+                        _errorMessage.value = "Anda perlu login untuk mengakses sumber daya ini."
+                    }
+                    403 -> {
+                        _errorMessage.value = "Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini."
+                    }
+                    404 -> {
+                        _errorMessage.value = "Halaman yang Anda cari tidak ditemukan."
+                    }
+                    500 -> {
+                        _errorMessage.value = "Terjadi kesalahan pada server. Silakan coba lagi nanti."
+                    }
+                    else -> {
+                        _errorMessage.value = "Kesalahan tidak diketahui. Kode status: ${response.code()}"
+                    }
                 }
             }
 
             override fun onFailure(call: Call<DetailResponse>, t: Throwable) {
                 _isLoading.value = false
-                _errorMessage.value = "Error: ${t.message}"
+                if (t is IOException) {
+                    _errorMessage.value = "Gagal dimuat, coba cek koneksi internet"
+                } else {
+                    _errorMessage.value = "Error: ${t.message}"
+                }
             }
         })
     }

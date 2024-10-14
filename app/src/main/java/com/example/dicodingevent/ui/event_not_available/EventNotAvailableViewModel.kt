@@ -8,6 +8,7 @@ import data.retrofit.ApiConfig
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 class EventNotAvailableViewModel : ViewModel() {
 
@@ -20,7 +21,12 @@ class EventNotAvailableViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
+
     fun fetchNotAvailableEvents() {
+        if (_eventResponse.value != null) {
+            return
+        }
+
         _isLoading.value = true
         ApiConfig.getApiService().getCompletedEvents().enqueue(object : Callback<EventResponse> {
             override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
@@ -34,23 +40,29 @@ class EventNotAvailableViewModel : ViewModel() {
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
                 _isLoading.value = false
-                _errorMessage.value = "Error: ${t.message}"
+                if (t is IOException) {
+                    _errorMessage.value = "Gagal dimuat, coba cek koneksi internet"
+                } else {
+                    _errorMessage.value = "Error: ${t.message}"
+                }
             }
         })
     }
 
     fun searchEvents(query: String) {
-        _isLoading.value = true
+        _isLoading.value = true // Mulai loading
+        _eventResponse.value = null // Kosongkan data sebelumnya sebelum pencarian baru
+
         ApiConfig.getApiService().searchEvents(keyword = query).enqueue(object : Callback<EventResponse> {
             override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
-                _isLoading.value = false
+                _isLoading.value = false // Hentikan loading setelah respon diterima
                 if (response.isSuccessful) {
                     if (response.body()?.listEvents.isNullOrEmpty()) {
-                        _errorMessage.value = "Data tidak ada yang cocok untuk pencarian \"$query\""
-                        _eventResponse.value = null // Set eventResponse ke null jika tidak ada data
+                        _errorMessage.value = "Tidak ada hasil yang cocok untuk pencarian \"$query\""
+                        _eventResponse.value = null // Kosongkan data jika tidak ada hasil
                     } else {
                         _eventResponse.value = response.body()
-                        _errorMessage.value = null // Hapus pesan kesalahan jika data ditemukan
+                        _errorMessage.value = null // Hapus pesan error jika ada data
                     }
                 } else {
                     handleApiError(response.code())
@@ -58,11 +70,12 @@ class EventNotAvailableViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
-                _isLoading.value = false
+                _isLoading.value = false // Hentikan loading setelah error terjadi
                 _errorMessage.value = "Error: ${t.message}"
             }
         })
     }
+
 
     private fun handleApiError(code: Int) {
         _errorMessage.value = when (code) {
@@ -75,3 +88,4 @@ class EventNotAvailableViewModel : ViewModel() {
         }
     }
 }
+
