@@ -64,7 +64,6 @@ class EventNotAvailableViewModel : ViewModel() {
         })
     }
 
-
     private fun handleApiError(code: Int) {
         _errorMessage.value = when (code) {
             400 -> "Permintaan tidak valid. Silakan periksa kembali input Anda."

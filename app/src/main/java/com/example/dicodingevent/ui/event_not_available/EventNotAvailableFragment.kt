@@ -2,6 +2,8 @@ package com.example.dicodingevent.ui.event_not_available
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,15 +52,41 @@ class EventNotAvailableFragment : Fragment() {
                     viewModel.searchEvents(query)
                     searchBar.setText(query)
                     searchView.hide()
+                } else {
+                    // Jika teks dihapus, tampilkan ulang data acara
+                    viewModel.fetchNotAvailableEvents()
                 }
                 false
             }
 
+            // Menambahkan TextWatcher untuk mendeteksi perubahan teks pencarian
+            searchView.editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val query = s.toString()
+                    if (query.isEmpty()) {
+                        // Tampilkan ulang data acara jika teks pencarian dihapus
+                        viewModel.fetchNotAvailableEvents()
+                    }
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
             // Observe data dari ViewModel
             viewModel.eventResponse.observe(viewLifecycleOwner) { eventResponse ->
-                eventResponse?.listEvents?.let { events ->
-                    adapter.submitList(events)
-                    tvErrorMessage.visibility = View.GONE // Hide error message
+                if (eventResponse?.listEvents.isNullOrEmpty()) {
+                    // Jika hasil pencarian tidak ada, sembunyikan RecyclerView dan tampilkan pesan error
+                    rvEventNotAvailable.visibility = View.GONE
+                    tvErrorMessage.visibility = View.VISIBLE
+                } else {
+                    // Jika ada hasil, tampilkan RecyclerView dan sembunyikan pesan error
+                    rvEventNotAvailable.visibility = View.VISIBLE
+                    if (eventResponse != null) {
+                        adapter.submitList(eventResponse.listEvents)
+                    }
+                    tvErrorMessage.visibility = View.GONE
                 }
             }
 
@@ -70,12 +98,14 @@ class EventNotAvailableFragment : Fragment() {
                 if (!errorMessage.isNullOrEmpty()) {
                     tvErrorMessage.text = errorMessage
                     tvErrorMessage.visibility = View.VISIBLE
+                    rvEventNotAvailable.visibility = View.GONE
                 } else {
                     tvErrorMessage.visibility = View.GONE
                 }
             }
         }
 
+        // Fetch the initial data
         viewModel.fetchNotAvailableEvents()
     }
 
