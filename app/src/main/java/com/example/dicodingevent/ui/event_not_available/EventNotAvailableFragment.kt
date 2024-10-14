@@ -52,6 +52,8 @@ class EventNotAvailableFragment : Fragment() {
                     viewModel.searchEvents(query)
                     searchBar.setText(query)
                     searchView.hide()
+                    // Reset error message saat pencarian baru dimulai
+                    binding.tvErrorMessage.visibility = View.GONE
                 } else {
 
                     viewModel.fetchNotAvailableEvents()
@@ -87,12 +89,21 @@ class EventNotAvailableFragment : Fragment() {
                         adapter.submitList(eventResponse.listEvents)
                     }
                     tvErrorMessage.visibility = View.GONE
+                    viewModel.clearErrorMessage()
+
                 }
             }
 
             viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-                progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                if (isLoading) {
+
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.tvErrorMessage.visibility = View.GONE
+                } else {
+                    binding.progressBar.visibility = View.GONE
+                }
             }
+
 
             viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
                 if (!errorMessage.isNullOrEmpty()) {

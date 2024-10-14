@@ -27,6 +27,7 @@ class EventNotAvailableViewModel : ViewModel() {
             return
         }
 
+
         _isLoading.value = true
         ApiConfig.getApiService().getCompletedEvents().enqueue(object : Callback<EventResponse> {
             override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
@@ -86,6 +87,10 @@ class EventNotAvailableViewModel : ViewModel() {
             500 -> "Terjadi kesalahan pada server. Silakan coba lagi nanti."
             else -> "Kesalahan tidak diketahui. Kode status: $code"
         }
+    }
+
+    fun clearErrorMessage() {
+        _errorMessage.value = null
     }
 }
 
