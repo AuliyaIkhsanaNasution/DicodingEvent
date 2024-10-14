@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Dicoding Event</string>
-    <string name="title_home">Home</string>
+    <string name="title_home">Dicoding Event</string>
     <string name="title_available">Event Available</string>
     <string name="title_notavailable">Event Not Available</string>
     <string name="summary">Stay Update</string>
@@ -17,4 +17,5 @@
     <string name="error_loading_data">Error loading data</string>
     <string name="available_event">Available Event</string>
     <string name="not_available_event">Not Available Event</string>
+    <string name="searchbar_hint">Masukkan Kata</string>
 </resources>
