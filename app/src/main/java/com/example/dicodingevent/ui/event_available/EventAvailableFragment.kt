@@ -47,7 +47,7 @@ class EventAvailableFragment : Fragment() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this).get(EventAvailableViewModel::class.java)
+        viewModel = ViewModelProvider(this)[EventAvailableViewModel::class.java]
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             showLoading(isLoading)

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.6.0"
+agp = "8.6.1"
 converterGson = "2.9.0"
 glide = "4.16.0"
 imageslideshow = "0.1.2"
@@ -14,9 +14,9 @@ material = "1.12.0"
 constraintlayout = "2.1.4"
 lifecycleLivedataKtx = "2.8.6"
 lifecycleViewmodelKtx = "2.8.6"
-navigationFragmentKtx = "2.6.0"
+navigationFragmentKtx = "2.8.2"
 navigationSafeArgsGradlePlugin = "2.8.2"
-navigationUiKtx = "2.6.0"
+navigationUiKtx = "2.8.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

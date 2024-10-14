@@ -32,7 +32,7 @@ class EventNotAvailableFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(EventNotAvailableViewModel::class.java)
+        viewModel = ViewModelProvider(this)[EventNotAvailableViewModel::class.java]
         adapter = EventNotAvailableAdapter { eventId ->
             val action = EventNotAvailableFragmentDirections.actionNavigationEventNotAvailableToEventDetail(eventId)
             findNavController().navigate(action)
@@ -42,10 +42,10 @@ class EventNotAvailableFragment : Fragment() {
             rvEventNotAvailable.layoutManager = LinearLayoutManager(context)
             rvEventNotAvailable.adapter = adapter
 
-            // Mengaitkan SearchBar dengan SearchView
+
             searchView.setupWithSearchBar(searchBar)
 
-            // Set listener untuk editor action (misalnya ketika pengguna menekan "Enter")
+
             searchView.editText.setOnEditorActionListener { _, _, _ ->
                 val query = searchView.editText.text.toString()
                 if (query.isNotEmpty()) {
@@ -53,20 +53,20 @@ class EventNotAvailableFragment : Fragment() {
                     searchBar.setText(query)
                     searchView.hide()
                 } else {
-                    // Jika teks dihapus, tampilkan ulang data acara
+
                     viewModel.fetchNotAvailableEvents()
                 }
                 false
             }
 
-            // Menambahkan TextWatcher untuk mendeteksi perubahan teks pencarian
+
             searchView.editText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val query = s.toString()
                     if (query.isEmpty()) {
-                        // Tampilkan ulang data acara jika teks pencarian dihapus
+
                         viewModel.fetchNotAvailableEvents()
                     }
                 }
@@ -74,14 +74,14 @@ class EventNotAvailableFragment : Fragment() {
                 override fun afterTextChanged(s: Editable?) {}
             })
 
-            // Observe data dari ViewModel
+
             viewModel.eventResponse.observe(viewLifecycleOwner) { eventResponse ->
                 if (eventResponse?.listEvents.isNullOrEmpty()) {
-                    // Jika hasil pencarian tidak ada, sembunyikan RecyclerView dan tampilkan pesan error
+
                     rvEventNotAvailable.visibility = View.GONE
                     tvErrorMessage.visibility = View.VISIBLE
                 } else {
-                    // Jika ada hasil, tampilkan RecyclerView dan sembunyikan pesan error
+
                     rvEventNotAvailable.visibility = View.VISIBLE
                     if (eventResponse != null) {
                         adapter.submitList(eventResponse.listEvents)

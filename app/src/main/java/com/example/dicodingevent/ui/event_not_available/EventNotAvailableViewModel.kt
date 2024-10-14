@@ -50,19 +50,19 @@ class EventNotAvailableViewModel : ViewModel() {
     }
 
     fun searchEvents(query: String) {
-        _isLoading.value = true // Mulai loading
-        _eventResponse.value = null // Kosongkan data sebelumnya sebelum pencarian baru
+        _isLoading.value = true
+        _eventResponse.value = null
 
         ApiConfig.getApiService().searchEvents(keyword = query).enqueue(object : Callback<EventResponse> {
             override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
-                _isLoading.value = false // Hentikan loading setelah respon diterima
+                _isLoading.value = false
                 if (response.isSuccessful) {
                     if (response.body()?.listEvents.isNullOrEmpty()) {
                         _errorMessage.value = "Tidak ada hasil yang cocok untuk pencarian \"$query\""
-                        _eventResponse.value = null // Kosongkan data jika tidak ada hasil
+                        _eventResponse.value = null
                     } else {
                         _eventResponse.value = response.body()
-                        _errorMessage.value = null // Hapus pesan error jika ada data
+                        _errorMessage.value = null
                     }
                 } else {
                     handleApiError(response.code())
@@ -70,7 +70,7 @@ class EventNotAvailableViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<EventResponse>, t: Throwable) {
-                _isLoading.value = false // Hentikan loading setelah error terjadi
+                _isLoading.value = false
                 _errorMessage.value = "Error: ${t.message}"
             }
         })

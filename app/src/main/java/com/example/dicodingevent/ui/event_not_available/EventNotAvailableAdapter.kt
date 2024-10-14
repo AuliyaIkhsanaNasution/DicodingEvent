@@ -30,7 +30,6 @@ class EventNotAvailableAdapter(
         fun bind(event: ListEventsItem, onItemClicked: (Int) -> Unit) {
             binding.summary.text = event.name
 
-            // Load image with Glide and handle potential errors
             Glide.with(binding.image.context)
                 .load(event.mediaCover)
                 .into(binding.image)

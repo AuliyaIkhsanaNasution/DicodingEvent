@@ -39,7 +39,7 @@ class HomeViewModel : ViewModel() {
 
     // Function to load active events
     fun loadEventData() {
-        // Cek apakah data event slider sudah ada, jika sudah tidak perlu memanggil ulang API
+
         if (_eventSlider.value != null && _eventSlider.value!!.isNotEmpty()) {
             return
         }
@@ -75,9 +75,9 @@ class HomeViewModel : ViewModel() {
         })
     }
 
-    // Function to load completed events
+
     fun loadCompletedEvents() {
-        // Cek apakah data completed event sudah ada, jika sudah tidak perlu memanggil ulang API
+
         if (_completedEventList.value != null && _completedEventList.value!!.isNotEmpty()) {
             return
         }
